@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: ambassador
+    description: Evidence-grounded recruiter ambassador
 paths:
   /healthz:
     get:
@@ -24,6 +26,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /ambassador/chat:
+    post:
+      operationId: askAmbassador
+      tags: [ambassador]
+      summary: Ask the virtual recruiter ambassador
+      description: Answers recruiter questions using only verified resume content.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AmbassadorChatInput"
+      responses:
+        "200":
+          description: Grounded ambassador response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbassadorChatResponse"
+        "400":
+          description: Invalid request
+        "429":
+          description: Rate limit exceeded
+        "500":
+          description: Upstream assistant unavailable
 components:
   schemas:
     HealthStatus:
@@ -33,4 +60,38 @@ components:
           type: string
       required:
         - status
+    AmbassadorChatInput:
+      type: object
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 800
+      required:
+        - message
+    AmbassadorLink:
+      type: object
+      properties:
+        label:
+          type: string
+        href:
+          type: string
+        section:
+          type: string
+      required:
+        - label
+        - href
+        - section
+    AmbassadorChatResponse:
+      type: object
+      properties:
+        answer:
+          type: string
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/AmbassadorLink"
+      required:
+        - answer
+        - links
 
