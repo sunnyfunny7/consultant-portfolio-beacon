@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Popy Halder — Consultant Analyst"
+description = "A recruiter-ready visual resume site for Popy Halder, focused on consultant analyst positioning, verified evidence, selected projects, and an evidence-grounded virtual ambassador."
+version = "1.0.0"
+id = "artifacts/popy-halder-resume"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21920
+
+[services.development]
+run = "pnpm --filter @workspace/popy-halder-resume run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/popy-halder-resume", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/popy-halder-resume/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21920"
+BASE_PATH = "/"
